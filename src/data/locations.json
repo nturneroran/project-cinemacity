@@ -1,0 +1,142 @@
+[
+  {
+    "id": "trailerPark",
+    "name": "Trailer Park",
+    "description": "The starting area where cast and crew gather before the day begins.",
+    "neighbors": ["greenRoom", "castingAgency"],
+    "offCardRoles": [],
+    "isUpgradeLocation": false
+  },
+  {
+    "id": "greenRoom",
+    "name": "Green Room",
+    "description": "A multipurpose space used for small indoor scenes.",
+    "neighbors": ["trailerPark", "mainStage", "backLot"],
+    "offCardRoles": [
+      {
+        "id": "greenRoom-extra",
+        "name": "Background Performer",
+        "requiredRank": 1,
+        "pay": 1,
+        "line": "I'm just here to make the place look busy."
+      },
+      {
+        "id": "greenRoom-partner",
+        "name": "Scene Partner",
+        "requiredRank": 1,
+        "pay": 1,
+        "line": "And... scene."
+      }
+    ],
+    "isUpgradeLocation": false
+  },
+  {
+    "id": "mainStage",
+    "name": "Main Stage",
+    "description": "The largest filming area on the lot, equipped for major productions.",
+    "neighbors": ["greenRoom", "soundStage", "backLot"],
+    "offCardRoles": [
+      {
+        "id": "mainStage-standin",
+        "name": "Stand-In",
+        "requiredRank": 1,
+        "pay": 1,
+        "line": "I look just like the star — from a distance."
+      },
+      {
+        "id": "mainStage-featured",
+        "name": "Featured Extra",
+        "requiredRank": 2,
+        "pay": 2,
+        "line": "Don't blink — I'm practically the star."
+      }
+    ],
+    "isUpgradeLocation": false
+  },
+  {
+    "id": "soundStage",
+    "name": "Sound Stage",
+    "description": "A climate-controlled interior stage perfect for dialogue-heavy scenes.",
+    "neighbors": ["mainStage", "propRoom"],
+    "offCardRoles": [
+      {
+        "id": "soundStage-boom",
+        "name": "Boom Operator",
+        "requiredRank": 1,
+        "pay": 1,
+        "line": "I hold the mic. Carefully."
+      }
+    ],
+    "isUpgradeLocation": false
+  },
+  {
+    "id": "backLot",
+    "name": "Back Lot",
+    "description": "An expansive outdoor area used for action sequences and exterior shots.",
+    "neighbors": ["greenRoom", "mainStage", "wardrobe"],
+    "offCardRoles": [
+      {
+        "id": "backLot-wrangler",
+        "name": "Horse Wrangler",
+        "requiredRank": 1,
+        "pay": 1,
+        "line": "Easy, Trigger. Easy."
+      },
+      {
+        "id": "backLot-stunt",
+        "name": "Stunt Coordinator",
+        "requiredRank": 3,
+        "pay": 2,
+        "line": "Safety first. Then explosions."
+      }
+    ],
+    "isUpgradeLocation": false
+  },
+  {
+    "id": "propRoom",
+    "name": "Prop Room",
+    "description": "A storage area converted into an intimate filming location.",
+    "neighbors": ["soundStage", "wardrobe", "castingAgency"],
+    "offCardRoles": [
+      {
+        "id": "propRoom-handler",
+        "name": "Props Handler",
+        "requiredRank": 1,
+        "pay": 1,
+        "line": "Does this look authentic to you?"
+      }
+    ],
+    "isUpgradeLocation": false
+  },
+  {
+    "id": "wardrobe",
+    "name": "Wardrobe",
+    "description": "The costume department doubles as a cozy filming set for character-driven stories.",
+    "neighbors": ["backLot", "propRoom", "castingAgency"],
+    "offCardRoles": [
+      {
+        "id": "wardrobe-assistant",
+        "name": "Costume Assistant",
+        "requiredRank": 1,
+        "pay": 1,
+        "line": "The hat makes the character."
+      },
+      {
+        "id": "wardrobe-supervisor",
+        "name": "Wardrobe Supervisor",
+        "requiredRank": 2,
+        "pay": 2,
+        "line": "No, the other hat."
+      }
+    ],
+    "isUpgradeLocation": false
+  },
+  {
+    "id": "castingAgency",
+    "name": "Casting Agency",
+    "description": "The agency office where talent is discovered and rank upgrades are negotiated.",
+    "neighbors": ["trailerPark", "propRoom", "wardrobe"],
+    "offCardRoles": [],
+    "isUpgradeLocation": true
+  }
+]

@@ -1,0 +1,171 @@
+[
+  {
+    "id": "scene001",
+    "title": "The Great Heist",
+    "description": "A daring team pulls off the impossible — stealing the studio's own daily rushes.",
+    "budget": 5,
+    "shots": 3,
+    "roles": [
+      { "id": "scene001-mastermind", "name": "Mastermind", "requiredRank": 4, "pay": 3, "line": "Everyone has a role to play. Even me." },
+      { "id": "scene001-driver", "name": "Getaway Driver", "requiredRank": 2, "pay": 2, "line": "Keep the engine running." },
+      { "id": "scene001-lookout", "name": "Lookout", "requiredRank": 1, "pay": 1, "line": "All clear... I think." }
+    ]
+  },
+  {
+    "id": "scene002",
+    "title": "Love in the Desert",
+    "description": "Two strangers meet at an oasis, each hiding a secret.",
+    "budget": 3,
+    "shots": 2,
+    "roles": [
+      { "id": "scene002-lead", "name": "Lead Romantic", "requiredRank": 3, "pay": 3, "line": "I never expected to find you here." },
+      { "id": "scene002-interest", "name": "Love Interest", "requiredRank": 2, "pay": 2, "line": "My secret? It's you." }
+    ]
+  },
+  {
+    "id": "scene003",
+    "title": "Alien Arrival",
+    "description": "First contact goes sideways when the aliens demand a better script.",
+    "budget": 6,
+    "shots": 4,
+    "roles": [
+      { "id": "scene003-commander", "name": "Commander", "requiredRank": 5, "pay": 4, "line": "We come in peace. Probably." },
+      { "id": "scene003-scientist", "name": "Scientist", "requiredRank": 3, "pay": 2, "line": "Fascinating. Terrifying, but fascinating." },
+      { "id": "scene003-soldier", "name": "Rookie Soldier", "requiredRank": 1, "pay": 1, "line": "Was that the signal?" }
+    ]
+  },
+  {
+    "id": "scene004",
+    "title": "Sunset Riders",
+    "description": "Two cowboys race to reach a small town before sundown.",
+    "budget": 2,
+    "shots": 2,
+    "roles": [
+      { "id": "scene004-cowboy", "name": "Trail Boss", "requiredRank": 2, "pay": 2, "line": "Ride hard, ride fast." },
+      { "id": "scene004-sidekick", "name": "Sidekick", "requiredRank": 1, "pay": 1, "line": "Should I bring the horses?" }
+    ]
+  },
+  {
+    "id": "scene005",
+    "title": "Midnight Mystery",
+    "description": "A detective unravels clues left by an invisible thief.",
+    "budget": 4,
+    "shots": 3,
+    "roles": [
+      { "id": "scene005-detective", "name": "Lead Detective", "requiredRank": 3, "pay": 3, "line": "The answer was in the shadows all along." },
+      { "id": "scene005-suspect", "name": "Primary Suspect", "requiredRank": 1, "pay": 1, "line": "I didn't do it. Mostly." }
+    ]
+  },
+  {
+    "id": "scene006",
+    "title": "The Inside Job",
+    "description": "A trusted employee is the only one who knows where the vault is.",
+    "budget": 5,
+    "shots": 3,
+    "roles": [
+      { "id": "scene006-planner", "name": "Inside Man", "requiredRank": 4, "pay": 3, "line": "I've been planning this for three years." },
+      { "id": "scene006-cracker", "name": "Safe Cracker", "requiredRank": 2, "pay": 2, "line": "Give me sixty seconds." }
+    ]
+  },
+  {
+    "id": "scene007",
+    "title": "Rise of the Machines",
+    "description": "A malfunctioning robot learns what it means to dream.",
+    "budget": 3,
+    "shots": 2,
+    "roles": [
+      { "id": "scene007-engineer", "name": "Engineer", "requiredRank": 2, "pay": 2, "line": "I built this thing to serve coffee. Not take over the world." },
+      { "id": "scene007-robot", "name": "Robot Unit 7", "requiredRank": 1, "pay": 1, "line": "BEEP. Dream.EXE loading." }
+    ]
+  },
+  {
+    "id": "scene008",
+    "title": "Dragon's Summit",
+    "description": "A legendary mountain holds secrets no adventurer has ever returned from.",
+    "budget": 4,
+    "shots": 3,
+    "roles": [
+      { "id": "scene008-hero", "name": "Hero", "requiredRank": 3, "pay": 3, "line": "For the kingdom!" },
+      { "id": "scene008-wizard", "name": "Wizard", "requiredRank": 2, "pay": 2, "line": "I calculated a 12% survival rate. I am optimistic." },
+      { "id": "scene008-archer", "name": "Archer", "requiredRank": 1, "pay": 1, "line": "I'll cover the retreat." }
+    ]
+  },
+  {
+    "id": "scene009",
+    "title": "Wedding at the Oasis",
+    "description": "When the rings go missing, everyone is a suspect.",
+    "budget": 2,
+    "shots": 2,
+    "roles": [
+      { "id": "scene009-bride", "name": "Bride", "requiredRank": 2, "pay": 2, "line": "Somebody find those rings. Now." },
+      { "id": "scene009-bestman", "name": "Best Man", "requiredRank": 1, "pay": 1, "line": "I had one job." }
+    ]
+  },
+  {
+    "id": "scene010",
+    "title": "The Missing Crown",
+    "description": "A royal mystery unfolds across palace corridors and secret passages.",
+    "budget": 3,
+    "shots": 2,
+    "roles": [
+      { "id": "scene010-queen", "name": "The Queen", "requiredRank": 2, "pay": 2, "line": "A crown does not make a ruler, but I'd still like mine back." },
+      { "id": "scene010-guard", "name": "Royal Guard", "requiredRank": 1, "pay": 1, "line": "Nothing got past me. Allegedly." }
+    ]
+  },
+  {
+    "id": "scene011",
+    "title": "Beyond the Horizon",
+    "description": "Humanity's last starship sets course for an uncharted galaxy.",
+    "budget": 6,
+    "shots": 4,
+    "roles": [
+      { "id": "scene011-captain", "name": "Ship Captain", "requiredRank": 5, "pay": 4, "line": "There's nothing out there. That's exactly why we're going." },
+      { "id": "scene011-officer", "name": "First Officer", "requiredRank": 3, "pay": 2, "line": "Captain, the sensors are... confused." }
+    ]
+  },
+  {
+    "id": "scene012",
+    "title": "Desert Justice",
+    "description": "A lone sheriff faces an outlaw gang with nothing but principle.",
+    "budget": 3,
+    "shots": 3,
+    "roles": [
+      { "id": "scene012-sheriff", "name": "Sheriff", "requiredRank": 3, "pay": 3, "line": "This town isn't big enough for all of you." },
+      { "id": "scene012-bandit", "name": "Bandit Leader", "requiredRank": 1, "pay": 1, "line": "Big talk for one person." }
+    ]
+  },
+  {
+    "id": "scene013",
+    "title": "The Forgotten City",
+    "description": "An archaeologist races against a rival to unlock an ancient archive.",
+    "budget": 4,
+    "shots": 3,
+    "roles": [
+      { "id": "scene013-archaeologist", "name": "Archaeologist", "requiredRank": 3, "pay": 3, "line": "This belongs in a museum. Obviously." },
+      { "id": "scene013-guide", "name": "Local Guide", "requiredRank": 2, "pay": 2, "line": "I warned them about the traps." }
+    ]
+  },
+  {
+    "id": "scene014",
+    "title": "Outbreak",
+    "description": "A scientist races to contain a contagion while hiding the truth.",
+    "budget": 2,
+    "shots": 2,
+    "roles": [
+      { "id": "scene014-survivor", "name": "Survivor", "requiredRank": 1, "pay": 2, "line": "I just want to make it to morning." },
+      { "id": "scene014-scientist", "name": "Epidemiologist", "requiredRank": 2, "pay": 2, "line": "I need the data. All of it." }
+    ]
+  },
+  {
+    "id": "scene015",
+    "title": "The Grand Finale",
+    "description": "A maestro conducts a live performance with everything on the line.",
+    "budget": 5,
+    "shots": 4,
+    "roles": [
+      { "id": "scene015-conductor", "name": "Conductor", "requiredRank": 4, "pay": 3, "line": "Perfection isn't enough. I need transcendence." },
+      { "id": "scene015-soloist", "name": "Soloist", "requiredRank": 2, "pay": 2, "line": "My hands have never shaken before tonight." },
+      { "id": "scene015-stagehand", "name": "Stage Hand", "requiredRank": 1, "pay": 1, "line": "The spotlight's ready. Don't trip." }
+    ]
+  }
+]
