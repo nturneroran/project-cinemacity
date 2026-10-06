@@ -18,18 +18,34 @@ export class MoveAction implements Action {
   ) {}
 
   /**
-   * TODO: implement this method
-   * Hint: reject if player has a role, if already moved this turn, or if target is not a neighbor
+   * Checks role commitment, the per-turn move limit, and adjacency.
    */
   validate(): ActionResult {
-    throw new Error('Not implemented');
+    if (this.player.hasRole()) {
+      return { success: false, message: 'You cannot move while committed to a role.' };
+    }
+    if (this.turnManager.hasMoved) {
+      return { success: false, message: 'You have already moved this turn.' };
+    }
+    if (!this.board.isNeighbor(this.player.locationId, this.targetLocationId)) {
+      return { success: false, message: 'The target location is not adjacent.' };
+    }
+    return { success: true, message: '' };
   }
 
   /**
-   * TODO: implement this method
-   * Hint: call validate() first; if valid: moveTo, recordMove, emit playerMoved + stateChanged
+   * Moves the player and publishes the movement and state events.
    */
   execute(): ActionResult {
-    throw new Error('Not implemented');
+    const validation = this.validate();
+    if (!validation.success) return validation;
+
+    const from = this.board.getLocation(this.player.locationId);
+    const to = this.board.getLocation(this.targetLocationId);
+    this.player.moveTo(to.id);
+    this.turnManager.recordMove();
+    this.events.emit({ type: 'playerMoved', payload: { player: this.player, from, to } });
+    this.events.emit({ type: 'stateChanged', payload: {} });
+    return { success: true, message: `${this.player.name} moved to ${to.name}.` };
   }
 }

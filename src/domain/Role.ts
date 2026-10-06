@@ -28,21 +28,18 @@ export class Role {
     return this._takenByPlayerId;
   }
 
-  // TODO: implement this method
-  // Hint: returns true when no player currently holds this role
   isAvailable(): boolean {
-    throw new Error('Not implemented');
+    return this._takenByPlayerId === null;
   }
 
-  // TODO: implement this method
-  // Hint: record that the given player now occupies this role
   assign(playerId: string): void {
-    throw new Error('Not implemented');
+    if (!this.isAvailable()) {
+      throw new Error(`Role "${this.id}" is already taken.`);
+    }
+    this._takenByPlayerId = playerId;
   }
 
-  // TODO: implement this method
-  // Hint: clear the player assignment so this role is available again
   vacate(): void {
-    throw new Error('Not implemented');
+    this._takenByPlayerId = null;
   }
 }

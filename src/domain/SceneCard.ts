@@ -39,11 +39,14 @@ export class SceneCard {
    * Remove one shot counter.
    * @returns true if the scene is now wrapped (all shots removed).
    *
-   * TODO: implement this method
-   * Hint: decrement _remainingShots (not below 0), set _isWrapped when it reaches 0, return _isWrapped
+   * Repeated calls after wrapping leave the shot count at zero.
    */
   removeShot(): boolean {
-    throw new Error('Not implemented');
+    if (this._remainingShots > 0) {
+      this._remainingShots -= 1;
+    }
+    this._isWrapped = this._remainingShots === 0;
+    return this._isWrapped;
   }
 
   /** Return on-card roles that are not yet taken. */

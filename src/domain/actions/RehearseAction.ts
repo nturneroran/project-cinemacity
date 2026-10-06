@@ -23,20 +23,36 @@ export class RehearseAction implements Action {
   ) {}
 
   /**
-   * TODO: implement this method
-   * Hint: reject if player has no role, already acted/rehearsed this turn,
-   *       or no active scene at the player's location
+   * Checks role ownership, per-turn limits, and scene presence.
    */
   validate(): ActionResult {
-    throw new Error('Not implemented');
+    if (!this.player.hasRole()) {
+      return { success: false, message: 'You must take a role before rehearsing.' };
+    }
+    if (this.turnManager.hasActed || this.turnManager.hasRehearsed) {
+      return { success: false, message: 'You have already acted or rehearsed this turn.' };
+    }
+    const location = this.board.getLocation(this.player.locationId);
+    if (!location.hasScene()) {
+      return { success: false, message: 'There is no active scene at this location.' };
+    }
+    return { success: true, message: '' };
   }
 
   /**
-   * TODO: implement this method
-   * Hint: call validate(); if valid: addRehearsalToken, recordRehearse,
-   *       emit rehearsed + stateChanged
+   * Adds a rehearsal token and publishes the updated token count.
    */
   execute(): ActionResult {
-    throw new Error('Not implemented');
+    const validation = this.validate();
+    if (!validation.success) return validation;
+
+    this.player.addRehearsalToken();
+    this.turnManager.recordRehearse();
+    this.events.emit({
+      type: 'rehearsed',
+      payload: { player: this.player, newTokenCount: this.player.rehearsalTokens },
+    });
+    this.events.emit({ type: 'stateChanged', payload: {} });
+    return { success: true, message: `${this.player.name} rehearsed.` };
   }
 }

@@ -17,46 +17,42 @@ export class Board {
     this._locations = new Map(locations.map((l) => [l.id, l]));
   }
 
-  // TODO: implement this method
-  // Hint: look up the id in _locations; throw Error(`Unknown location ID: "${id}"`) if not found
   getLocation(id: string): Location {
-    throw new Error('Not implemented');
+    const location = this._locations.get(id);
+    if (!location) throw new Error(`Unknown location ID: "${id}"`);
+    return location;
   }
 
   getAllLocations(): Location[] {
     return Array.from(this._locations.values());
   }
 
-  // TODO: implement this method
-  // Hint: get the location, then map its neighborIds to Location objects using getLocation
   getNeighbors(locationId: string): Location[] {
-    throw new Error('Not implemented');
+    return this.getLocation(locationId).neighborIds.map((id) => this.getLocation(id));
   }
 
-  // TODO: implement this method
-  // Hint: delegate to Location.isNeighborOf
   isNeighbor(fromId: string, toId: string): boolean {
-    throw new Error('Not implemented');
+    return this.getLocation(fromId).isNeighborOf(toId);
   }
 
   /**
    * Returns all locations that can receive scene cards.
    * Upgrade locations are excluded since they never host scenes.
    *
-   * TODO: implement this method
-   * Hint: filter getAllLocations() where isUpgradeLocation is false
+   * Upgrade locations are excluded because they never receive scene cards.
    */
   getSceneLocations(): Location[] {
-    throw new Error('Not implemented');
+    return this.getAllLocations().filter((location) => !location.isUpgradeLocation);
   }
 
   /**
    * Convenience: return the single upgrade location (throws if none).
    *
-   * TODO: implement this method
-   * Hint: find a location where isUpgradeLocation is true; throw if none
+   * Throws if the board does not contain an upgrade location.
    */
   getUpgradeLocation(): Location {
-    throw new Error('Not implemented');
+    const location = this.getAllLocations().find((candidate) => candidate.isUpgradeLocation);
+    if (!location) throw new Error('Board has no upgrade location.');
+    return location;
   }
 }

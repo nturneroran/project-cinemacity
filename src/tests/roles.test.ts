@@ -3,50 +3,61 @@ import { makeMinimalGame } from './helpers';
 
 describe('Role rules', () => {
   it('allows taking a role when rank is sufficient', () => {
-    // TODO: implement this test
-    // Hint: makeMinimalGame({ playerRank: 2 }); scene-a-lead requires rank 2; assert success and currentRoleId
-    expect(true).toBe(false);
+    const { game, alice } = makeMinimalGame({ playerRank: 2 });
+    const result = game.takeRole('scene-a-lead');
+    expect(result.success).toBe(true);
+    expect(alice.currentRoleId).toBe('scene-a-lead');
   });
 
   it('rejects taking a role when rank is too low', () => {
-    // TODO: implement this test
-    // Hint: makeMinimalGame({ playerRank: 1 }); scene-a-lead requires rank 2; assert failure and message
-    expect(true).toBe(false);
+    const { game } = makeMinimalGame({ playerRank: 1 });
+    const result = game.takeRole('scene-a-lead');
+    expect(result.success).toBe(false);
+    expect(result.message).toContain('rank');
   });
 
   it('rejects taking a role when player already has a role', () => {
-    // TODO: implement this test
-    // Hint: take a role, then try taking another; assert second attempt fails with "already" in message
-    expect(true).toBe(false);
+    const { game } = makeMinimalGame();
+    expect(game.takeRole('scene-a-lead').success).toBe(true);
+    const result = game.takeRole('loc-a-extra');
+    expect(result.success).toBe(false);
+    expect(result.message).toContain('already');
   });
 
   it('rejects taking a role that is already taken by another player', () => {
-    // TODO: implement this test
-    // Hint: Alice takes scene-a-lead; Bob (after endTurn) tries same role; assert failure
-    expect(true).toBe(false);
+    const { game } = makeMinimalGame();
+    expect(game.takeRole('scene-a-lead').success).toBe(true);
+    game.endTurn();
+    const result = game.takeRole('scene-a-lead');
+    expect(result.success).toBe(false);
   });
 
   it('marks the role as unavailable after it is taken', () => {
-    // TODO: implement this test
-    // Hint: after takeRole succeeds, assert role.isAvailable() === false and role.takenByPlayerId === 'alice'
-    expect(true).toBe(false);
+    const { game, locA } = makeMinimalGame();
+    expect(game.takeRole('scene-a-lead').success).toBe(true);
+    const role = locA.currentScene!.roles[0];
+    expect(role.isAvailable()).toBe(false);
+    expect(role.takenByPlayerId).toBe('alice');
   });
 
   it('allows taking an off-card role with rank 1', () => {
-    // TODO: implement this test
-    // Hint: makeMinimalGame({ playerRank: 1 }); loc-a-extra is off-card rank 1; assert success and isOnCard === false
-    expect(true).toBe(false);
+    const { game, alice } = makeMinimalGame({ playerRank: 1 });
+    const result = game.takeRole('loc-a-extra');
+    expect(result.success).toBe(true);
+    expect(alice.currentRoleIsOnCard).toBe(false);
   });
 
   it('rejects taking a role with no active scene at the location', () => {
-    // TODO: implement this test
-    // Hint: clearScene() on locA, then try to take a role; assert failure
-    expect(true).toBe(false);
+    const { game, locA } = makeMinimalGame();
+    locA.clearScene();
+    const result = game.takeRole('loc-a-extra');
+    expect(result.success).toBe(false);
   });
 
   it('domain rejects illegal action — rank insufficient (domain-layer enforcement)', () => {
-    // TODO: implement this test
-    // Hint: confirm that player.hasRole() is still false after a failed takeRole
-    expect(true).toBe(false);
+    const { game, alice } = makeMinimalGame({ playerRank: 1 });
+    const result = game.takeRole('scene-a-lead');
+    expect(result.success).toBe(false);
+    expect(alice.hasRole()).toBe(false);
   });
 });

@@ -58,44 +58,39 @@ export class TurnManager {
     return this._hasUpgraded;
   }
 
-  // TODO: implement this method
-  // Hint: set _hasMoved = true
   recordMove(): void {
-    throw new Error('Not implemented');
+    this._hasMoved = true;
   }
 
-  // TODO: implement this method
-  // Hint: set _hasTakenRole = true
   recordTakeRole(): void {
-    throw new Error('Not implemented');
+    this._hasTakenRole = true;
   }
 
-  // TODO: implement this method
-  // Hint: set _hasActed = true
   recordAct(): void {
-    throw new Error('Not implemented');
+    this._hasActed = true;
   }
 
-  // TODO: implement this method
-  // Hint: set _hasRehearsed = true
   recordRehearse(): void {
-    throw new Error('Not implemented');
+    this._hasRehearsed = true;
   }
 
-  // TODO: implement this method
-  // Hint: set _hasUpgraded = true
   recordUpgrade(): void {
-    throw new Error('Not implemented');
+    this._hasUpgraded = true;
   }
 
   /**
    * Move to the next player and reset all per-turn flags.
    *
-   * TODO: implement this method
-   * Hint: advance _currentIndex with modulo; increment _turnNumber when index wraps to 0;
-   *       reset all five _has* flags to false
+   * Advances to the next player, increments the round after wraparound, and
+   * clears all per-turn action flags.
    */
   advanceTurn(): void {
-    throw new Error('Not implemented');
+    this._currentIndex = (this._currentIndex + 1) % this._players.length;
+    if (this._currentIndex === 0) this._turnNumber += 1;
+    this._hasMoved = false;
+    this._hasTakenRole = false;
+    this._hasActed = false;
+    this._hasRehearsed = false;
+    this._hasUpgraded = false;
   }
 }

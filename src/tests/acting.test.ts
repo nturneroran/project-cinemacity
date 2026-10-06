@@ -11,56 +11,87 @@ import { makeMinimalGame } from './helpers';
  */
 describe('Acting rules', () => {
   it('rejects act when player has no role', () => {
-    // TODO: implement this test
-    // Hint: makeMinimalGame(); call game.act() without taking a role; assert failure with 'role' in message
-    expect(true).toBe(false);
+    const { game } = makeMinimalGame();
+    const result = game.act();
+    expect(result.success).toBe(false);
+    expect(result.message).toContain('role');
   });
 
   it('rejects act when player has already acted this turn', () => {
-    // TODO: implement this test
-    // Hint: take role, act once, act again; second should fail with 'already' in message
-    expect(true).toBe(false);
+    const { game } = makeMinimalGame();
+    game.takeRole('scene-a-lead');
+    expect(game.act().success).toBe(true);
+    const result = game.act();
+    expect(result.success).toBe(false);
+    expect(result.message).toContain('already');
   });
 
   it('successful on-card act: removes shot, awards +1 reputation', () => {
-    // TODO: implement this test
-    // Hint: budget=3, rollDie=()=>6; take scene-a-lead (on-card); act; assert rep+1, credits unchanged, shot removed
-    expect(true).toBe(false);
+    const { game, alice, locA } = makeMinimalGame({ budget: 3, rollDie: () => 6 });
+    const startingCredits = alice.credits;
+    game.takeRole('scene-a-lead');
+    const result = game.act();
+    expect(result.success).toBe(true);
+    expect(result.shotRemoved).toBe(true);
+    expect(alice.reputation).toBe(1);
+    expect(alice.credits).toBe(startingCredits);
+    expect(locA.currentScene!.remainingShots).toBe(1);
   });
 
   it('failed on-card act: no reward', () => {
-    // TODO: implement this test
-    // Hint: budget=5, rollDie=()=>1; take on-card role; act; assert credits and rep unchanged
-    expect(true).toBe(false);
+    const { game, alice } = makeMinimalGame({ budget: 5, rollDie: () => 1 });
+    const startingCredits = alice.credits;
+    game.takeRole('scene-a-lead');
+    game.act();
+    expect(alice.credits).toBe(startingCredits);
+    expect(alice.reputation).toBe(0);
   });
 
   it('successful off-card act: removes shot, awards +2 credits +1 reputation', () => {
-    // TODO: implement this test
-    // Hint: budget=3, rollDie=()=>6; take loc-a-extra (off-card); act; assert credits+2, rep+1, shot removed
-    expect(true).toBe(false);
+    const { game, alice } = makeMinimalGame({ budget: 3, rollDie: () => 6 });
+    game.takeRole('loc-a-extra');
+    const result = game.act();
+    expect(result.shotRemoved).toBe(true);
+    expect(alice.credits).toBe(7);
+    expect(alice.reputation).toBe(1);
   });
 
   it('failed off-card act: awards +1 credit (consolation)', () => {
-    // TODO: implement this test
-    // Hint: budget=6, rollDie=()=>1; take off-card role; act; assert credits+1
-    expect(true).toBe(false);
+    const { game, alice } = makeMinimalGame({ budget: 6, rollDie: () => 1 });
+    game.takeRole('loc-a-extra');
+    game.act();
+    expect(alice.credits).toBe(6);
+    expect(alice.reputation).toBe(0);
   });
 
   it('rehearsal tokens add to the die roll', () => {
-    // TODO: implement this test
-    // Hint: budget=4, rollDie=()=>3; rehearse (+1 token); endTurn both players; act; 3+1=4 >= 4 → success
-    expect(true).toBe(false);
+    const { game, alice } = makeMinimalGame({ budget: 4, rollDie: () => 3 });
+    game.takeRole('scene-a-lead');
+    expect(game.rehearse().success).toBe(true);
+    game.endTurn();
+    game.endTurn();
+    const result = game.act();
+    expect(result.success).toBe(true);
+    expect(result.shotRemoved).toBe(true);
+    expect(alice.reputation).toBe(1);
   });
 
   it('rehearsal tokens accumulate across turns', () => {
-    // TODO: implement this test
-    // Hint: rehearse on turn 1, endTurn; rehearse again on turn 2; assert rehearsalTokens === 2
-    expect(true).toBe(false);
+    const { game, alice } = makeMinimalGame();
+    game.takeRole('scene-a-lead');
+    game.rehearse();
+    game.endTurn();
+    game.endTurn();
+    expect(game.rehearse().success).toBe(true);
+    expect(alice.rehearsalTokens).toBe(2);
   });
 
   it('cannot rehearse and act in the same turn', () => {
-    // TODO: implement this test
-    // Hint: rehearse, then act; act should fail with 'already' in message
-    expect(true).toBe(false);
+    const { game } = makeMinimalGame();
+    game.takeRole('scene-a-lead');
+    game.rehearse();
+    const result = game.act();
+    expect(result.success).toBe(false);
+    expect(result.message).toContain('already');
   });
 });

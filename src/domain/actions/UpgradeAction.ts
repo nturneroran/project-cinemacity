@@ -43,20 +43,57 @@ export class UpgradeAction implements Action {
   ) {}
 
   /**
-   * TODO: implement this method
-   * Hint: reject if player has a role, already upgraded, not at upgrade location,
-   *       toRank !== player.rank + 1, toRank > MAX_RANK, or insufficient currency
+   * Checks upgrade location, turn limits, sequential rank progression, and cost.
    */
   validate(): ActionResult {
-    throw new Error('Not implemented');
+    if (this.player.hasRole()) {
+      return { success: false, message: 'You cannot upgrade while committed to a role.' };
+    }
+    if (this.turnManager.hasUpgraded) {
+      return { success: false, message: 'You have already upgraded this turn.' };
+    }
+    if (!this.board.getLocation(this.player.locationId).isUpgradeLocation) {
+      return { success: false, message: 'You must be at the upgrade location.' };
+    }
+    if (this.toRank !== this.player.rank + 1) {
+      return { success: false, message: 'You must upgrade one rank at a time.' };
+    }
+    if (this.toRank > MAX_RANK) {
+      return { success: false, message: `Rank cannot exceed ${MAX_RANK}.` };
+    }
+    const cost = UPGRADE_COSTS.find((entry) => entry.toRank === this.toRank);
+    if (!cost) {
+      return { success: false, message: 'No upgrade cost is defined for that rank.' };
+    }
+    const balance = this.currency === 'credits' ? this.player.credits : this.player.reputation;
+    const required = this.currency === 'credits' ? cost.creditCost : cost.reputationCost;
+    if (balance < required) {
+      return { success: false, message: `Insufficient ${this.currency} for this upgrade.` };
+    }
+    return { success: true, message: '' };
   }
 
   /**
-   * TODO: implement this method
-   * Hint: call validate(); if valid: deduct currency (spendCredits or spendReputation),
-   *       upgradeRank, recordUpgrade, emit rankUpgraded + stateChanged
+   * Spends the selected currency, updates rank, and publishes upgrade events.
    */
   execute(): ActionResult {
-    throw new Error('Not implemented');
+    const validation = this.validate();
+    if (!validation.success) return validation;
+
+    const oldRank = this.player.rank;
+    const cost = UPGRADE_COSTS.find((entry) => entry.toRank === this.toRank)!;
+    if (this.currency === 'credits') {
+      this.player.spendCredits(cost.creditCost);
+    } else {
+      this.player.spendReputation(cost.reputationCost);
+    }
+    this.player.upgradeRank(this.toRank);
+    this.turnManager.recordUpgrade();
+    this.events.emit({
+      type: 'rankUpgraded',
+      payload: { player: this.player, oldRank, newRank: this.toRank },
+    });
+    this.events.emit({ type: 'stateChanged', payload: {} });
+    return { success: true, message: `${this.player.name} upgraded to rank ${this.toRank}.` };
   }
 }

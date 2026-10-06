@@ -17,18 +17,21 @@ export class EndTurnAction implements Action {
     private readonly events: GameEventEmitter,
   ) {}
 
-  // TODO: implement this method
-  // Hint: end turn is always valid — always return { success: true, message: '' }
   validate(): ActionResult {
-    throw new Error('Not implemented');
+    return { success: true, message: '' };
   }
 
   /**
-   * TODO: implement this method
-   * Hint: call turnManager.advanceTurn(); emit turnEnded (with previousPlayer and nextPlayer)
-   *       and stateChanged; return success message naming the next player
+   * Advances the turn, emits turn events, and names the next player.
    */
   execute(): ActionResult {
-    throw new Error('Not implemented');
+    const validation = this.validate();
+    if (!validation.success) return validation;
+    const previousPlayer = this.currentPlayer;
+    this.turnManager.advanceTurn();
+    const nextPlayer = this.turnManager.currentPlayer;
+    this.events.emit({ type: 'turnEnded', payload: { previousPlayer, nextPlayer } });
+    this.events.emit({ type: 'stateChanged', payload: {} });
+    return { success: true, message: `Turn ended. It is now ${nextPlayer.name}'s turn.` };
   }
 }

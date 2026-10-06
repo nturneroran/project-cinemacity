@@ -18,11 +18,9 @@ export class SceneDeck {
    * Draw and remove the top card from the deck.
    * Returns null if the deck is empty.
    *
-   * TODO: implement this method
-   * Hint: remove and return the first element of _cards; return null if empty
    */
   draw(): SceneCard | null {
-    throw new Error('Not implemented');
+    return this._cards.shift() ?? null;
   }
 
   get remaining(): number {

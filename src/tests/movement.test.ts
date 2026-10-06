@@ -3,38 +3,46 @@ import { makeMinimalGame, makeGame } from './helpers';
 
 describe('Movement rules', () => {
   it('allows moving to an adjacent location', () => {
-    // TODO: implement this test
-    // Hint: use makeMinimalGame(); call game.move('locB'); assert result.success and updated locationId
-    expect(true).toBe(false);
+    const { game, alice } = makeMinimalGame();
+    const result = game.move('locB');
+    expect(result.success).toBe(true);
+    expect(alice.locationId).toBe('locB');
   });
 
   it('rejects moving to a non-adjacent location', () => {
-    // TODO: implement this test
-    // Hint: use makeGame(); trailerPark and soundStage are NOT adjacent; assert result.success === false
-    expect(true).toBe(false);
+    const game = makeGame();
+    const result = game.move('soundStage');
+    expect(result.success).toBe(false);
   });
 
   it('prevents moving while committed to a role', () => {
-    // TODO: implement this test
-    // Hint: take a role first (alice.takeRole + scene.roles[0].assign), then try to move
-    expect(true).toBe(false);
+    const { game, alice, locA } = makeMinimalGame();
+    const role = locA.currentScene!.roles[0];
+    alice.takeRole(role.id, role.isOnCard);
+    role.assign(alice.id);
+    const result = game.move('locB');
+    expect(result.success).toBe(false);
+    expect(result.message).toContain('role');
   });
 
   it('prevents moving twice in the same turn', () => {
-    // TODO: implement this test
-    // Hint: move once to locB successfully, then try to move again; second should fail
-    expect(true).toBe(false);
+    const { game } = makeMinimalGame();
+    expect(game.move('locB').success).toBe(true);
+    expect(game.move('locA').success).toBe(false);
   });
 
   it('updates player location after a successful move', () => {
-    // TODO: implement this test
-    // Hint: assert locationId before and after a successful move
-    expect(true).toBe(false);
+    const { game, alice } = makeMinimalGame();
+    expect(alice.locationId).toBe('locA');
+    game.move('locB');
+    expect(alice.locationId).toBe('locB');
   });
 
   it('allows movement again after turn ends', () => {
-    // TODO: implement this test
-    // Hint: move, endTurn for both players, then move again successfully
-    expect(true).toBe(false);
+    const { game } = makeMinimalGame();
+    expect(game.move('locB').success).toBe(true);
+    game.endTurn();
+    game.endTurn();
+    expect(game.move('locA').success).toBe(true);
   });
 });

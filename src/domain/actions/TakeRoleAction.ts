@@ -19,21 +19,50 @@ export class TakeRoleAction implements Action {
   ) {}
 
   /**
-   * TODO: implement this method
-   * Hint: reject if player already has a role, already took a role this turn,
-   *       role not found/available at location, or player rank is too low
+   * Checks role ownership, turn limits, availability, and rank requirements.
    */
   validate(): ActionResult {
-    throw new Error('Not implemented');
+    if (this.player.hasRole()) {
+      return { success: false, message: 'You already have a role.' };
+    }
+    if (this.turnManager.hasTakenRole) {
+      return { success: false, message: 'You have already taken a role this turn.' };
+    }
+    const location = this.board.getLocation(this.player.locationId);
+    const role = this._findRole(location);
+    if (!role) {
+      return { success: false, message: 'That role is not available at this location.' };
+    }
+    if (this.player.rank < role.requiredRank) {
+      return { success: false, message: `This role requires rank ${role.requiredRank}.` };
+    }
+    return { success: true, message: '' };
   }
 
   /**
-   * TODO: implement this method
-   * Hint: call validate(); if valid: role.assign, player.takeRole, recordTakeRole,
-   *       emit roleTaken + stateChanged
+   * Assigns the available role and publishes the corresponding game events.
    */
   execute(): ActionResult {
-    throw new Error('Not implemented');
+    const validation = this.validate();
+    if (!validation.success) return validation;
+
+    const location = this.board.getLocation(this.player.locationId);
+    const role = this._findRole(location)!;
+    role.assign(this.player.id);
+    this.player.takeRole(role.id, role.isOnCard);
+    this.turnManager.recordTakeRole();
+    this.events.emit({
+      type: 'roleTaken',
+      payload: {
+        player: this.player,
+        roleId: role.id,
+        roleName: role.name,
+        isOnCard: role.isOnCard,
+        location,
+      },
+    });
+    this.events.emit({ type: 'stateChanged', payload: {} });
+    return { success: true, message: `${this.player.name} took the role "${role.name}".` };
   }
 
   /**

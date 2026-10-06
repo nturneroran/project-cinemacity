@@ -62,28 +62,24 @@ export class Player {
 
   // --- Mutators ---
 
-  // TODO: implement this method
-  // Hint: update _locationId to the given locationId
   moveTo(locationId: string): void {
-    throw new Error('Not implemented');
+    this._locationId = locationId;
   }
 
-  // TODO: implement this method
-  // Hint: set _currentRoleId and _currentRoleIsOnCard; reset _rehearsalTokens to 0
   takeRole(roleId: string, isOnCard: boolean): void {
-    throw new Error('Not implemented');
+    this._currentRoleId = roleId;
+    this._currentRoleIsOnCard = isOnCard;
+    this._rehearsalTokens = 0;
   }
 
-  // TODO: implement this method
-  // Hint: set _currentRoleId to null, _currentRoleIsOnCard to false, _rehearsalTokens to 0
   clearRole(): void {
-    throw new Error('Not implemented');
+    this._currentRoleId = null;
+    this._currentRoleIsOnCard = false;
+    this._rehearsalTokens = 0;
   }
 
-  // TODO: implement this method
-  // Hint: increment _rehearsalTokens by 1
   addRehearsalToken(): void {
-    throw new Error('Not implemented');
+    this._rehearsalTokens += 1;
   }
 
   earnCredits(amount: number): void {
@@ -94,22 +90,22 @@ export class Player {
     this._reputation += amount;
   }
 
-  // TODO: implement this method
-  // Hint: throw if amount > _credits; otherwise deduct from _credits
   spendCredits(amount: number): void {
-    throw new Error('Not implemented');
+    if (amount > this._credits) {
+      throw new Error('Insufficient credits.');
+    }
+    this._credits -= amount;
   }
 
-  // TODO: implement this method
-  // Hint: throw if amount > _reputation; otherwise deduct from _reputation
   spendReputation(amount: number): void {
-    throw new Error('Not implemented');
+    if (amount > this._reputation) {
+      throw new Error('Insufficient reputation.');
+    }
+    this._reputation -= amount;
   }
 
-  // TODO: implement this method
-  // Hint: set _rank to toRank
   upgradeRank(toRank: number): void {
-    throw new Error('Not implemented');
+    this._rank = toRank;
   }
 
   /**
@@ -117,10 +113,9 @@ export class Player {
    * Formula: reputation × 2 + credits + rank
    * Reputation is worth the most because it reflects artistic success.
    *
-   * TODO: implement this method
-   * Hint: return _reputation * 2 + _credits + _rank
+   * Reputation is worth the most because it reflects artistic success.
    */
   calculateScore(): number {
-    throw new Error('Not implemented');
+    return this._reputation * 2 + this._credits + this._rank;
   }
 }

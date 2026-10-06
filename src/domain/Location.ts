@@ -31,22 +31,16 @@ export class Location {
     return this._currentScene;
   }
 
-  // TODO: implement this method
-  // Hint: assign the given card to _currentScene
   setScene(card: SceneCard): void {
-    throw new Error('Not implemented');
+    this._currentScene = card;
   }
 
-  // TODO: implement this method
-  // Hint: set _currentScene to null
   clearScene(): void {
-    throw new Error('Not implemented');
+    this._currentScene = null;
   }
 
-  // TODO: implement this method
-  // Hint: return true when _currentScene is not null
   hasScene(): boolean {
-    throw new Error('Not implemented');
+    return this._currentScene !== null;
   }
 
   /**
@@ -55,16 +49,18 @@ export class Location {
    * CRITICAL: Roles are only available if a scene is active here.
    * Return [] when there is no scene, even if offCardRoles exist.
    *
-   * TODO: implement this method
-   * Hint: if no scene, return []; otherwise combine scene's available roles with available off-card roles
+   * Returns an empty list without an active scene; otherwise combines
+   * available scene and off-card roles.
    */
   getAvailableRoles(): Role[] {
-    throw new Error('Not implemented');
+    if (!this._currentScene) return [];
+    return [
+      ...this._currentScene.getAvailableRoles(),
+      ...this.offCardRoles.filter((role) => role.isAvailable()),
+    ];
   }
 
-  // TODO: implement this method
-  // Hint: return true when locationId appears in the neighborIds array
   isNeighborOf(locationId: string): boolean {
-    throw new Error('Not implemented');
+    return this.neighborIds.includes(locationId);
   }
 }

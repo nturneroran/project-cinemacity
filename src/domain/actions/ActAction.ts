@@ -47,30 +47,73 @@ export class ActAction implements Action {
   ) {}
 
   /**
-   * TODO: implement this method
-   * Hint: reject if player has no role, already acted/rehearsed this turn,
-   *       or no active scene at location
+   * Checks role ownership, the per-turn act/rehearse limit, and scene presence.
    */
   validate(): ActionResult {
-    throw new Error('Not implemented');
+    if (!this.player.hasRole()) {
+      return { success: false, message: 'You must take a role before acting.' };
+    }
+    if (this.turnManager.hasActed || this.turnManager.hasRehearsed) {
+      return { success: false, message: 'You have already acted or rehearsed this turn.' };
+    }
+    const location = this.board.getLocation(this.player.locationId);
+    if (!location.hasScene()) {
+      return { success: false, message: 'There is no active scene at this location.' };
+    }
+    return { success: true, message: '' };
   }
 
   /**
-   * TODO: implement this method
-   * Hint:
-   *  1. Call validate(); return early if invalid.
-   *  2. Look up the location and scene.
-   *  3. Find the player's role among scene.roles and location.offCardRoles.
-   *  4. Roll die, add rehearsal tokens; compare total to scene.budget.
-   *  5. On success: call scene.removeShot(); award on-card (+1 rep) or off-card (+2 cr, +1 rep).
-   *  6. On failure: award off-card consolation (+1 cr only).
-   *  7. Call turnManager.recordAct().
-   *  8. Emit actPerformed.
-   *  9. If scene completed, call onSceneWrap and emit sceneWrapped.
-   * 10. Emit stateChanged.
-   * 11. Return the ActionResult with dieRoll, shotRemoved, sceneCompleted fields.
+   * Rolls for the player's role, applies the result rewards, and handles scene
+   * completion through the configured wrap callback.
    */
   execute(): ActionResult {
-    throw new Error('Not implemented');
+    const validation = this.validate();
+    if (!validation.success) return validation;
+
+    const location = this.board.getLocation(this.player.locationId);
+    const scene = location.currentScene!;
+    const role = [...scene.roles, ...location.offCardRoles].find(
+      (candidate) => candidate.id === this.player.currentRoleId,
+    );
+    if (!role) {
+      return { success: false, message: 'Your role is not present at this location.' };
+    }
+
+    const dieRoll = this.rollDie();
+    const total = dieRoll + this.player.rehearsalTokens;
+    const succeeded = total >= scene.budget;
+    let shotRemoved = false;
+    let sceneCompleted = false;
+
+    if (succeeded) {
+      sceneCompleted = scene.removeShot();
+      shotRemoved = true;
+      if (role.isOnCard) {
+        this.player.earnReputation(1);
+      } else {
+        this.player.earnCredits(2);
+        this.player.earnReputation(1);
+      }
+    } else if (!role.isOnCard) {
+      this.player.earnCredits(1);
+    }
+
+    this.turnManager.recordAct();
+    const result: ActionResult = {
+      success: true,
+      message: succeeded ? 'The acting attempt succeeded.' : 'The acting attempt failed.',
+      dieRoll,
+      shotRemoved,
+      sceneCompleted,
+    };
+    this.events.emit({ type: 'actPerformed', payload: { player: this.player, result } });
+
+    if (sceneCompleted) {
+      const rewards = this.onSceneWrap(scene, location);
+      this.events.emit({ type: 'sceneWrapped', payload: { location, scene, rewards } });
+    }
+    this.events.emit({ type: 'stateChanged', payload: {} });
+    return result;
   }
 }

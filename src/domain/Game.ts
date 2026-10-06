@@ -78,40 +78,65 @@ export class Game {
   // --- Player Actions (Command factory + execute) ---
   // Each method constructs a Command object and calls execute().
 
-  // TODO: implement this method
-  // Hint: construct a MoveAction with the required dependencies and call execute()
   move(targetLocationId: string): ActionResult {
-    throw new Error('Not implemented');
+    if (this._isOver) return this._gameOverResult();
+    return new MoveAction(
+      this.currentPlayer,
+      this.board,
+      this._turnManager,
+      this.events,
+      targetLocationId,
+    ).execute();
   }
 
-  // TODO: implement this method
-  // Hint: construct a TakeRoleAction with the required dependencies and call execute()
   takeRole(roleId: string): ActionResult {
-    throw new Error('Not implemented');
+    if (this._isOver) return this._gameOverResult();
+    return new TakeRoleAction(
+      this.currentPlayer,
+      this.board,
+      this._turnManager,
+      this.events,
+      roleId,
+    ).execute();
   }
 
-  // TODO: implement this method
-  // Hint: construct an ActAction — pass this._rollDie and a callback to _handleSceneWrap
   act(): ActionResult {
-    throw new Error('Not implemented');
+    if (this._isOver) return this._gameOverResult();
+    return new ActAction(
+      this.currentPlayer,
+      this.board,
+      this._turnManager,
+      this.events,
+      this._rollDie,
+      (scene, location) => this._handleSceneWrap(scene, location),
+    ).execute();
   }
 
-  // TODO: implement this method
-  // Hint: construct a RehearseAction with the required dependencies and call execute()
   rehearse(): ActionResult {
-    throw new Error('Not implemented');
+    if (this._isOver) return this._gameOverResult();
+    return new RehearseAction(
+      this.currentPlayer,
+      this.board,
+      this._turnManager,
+      this.events,
+    ).execute();
   }
 
-  // TODO: implement this method
-  // Hint: construct an UpgradeAction with the required dependencies and call execute()
   upgrade(toRank: number, currency: Currency): ActionResult {
-    throw new Error('Not implemented');
+    if (this._isOver) return this._gameOverResult();
+    return new UpgradeAction(
+      this.currentPlayer,
+      this.board,
+      this._turnManager,
+      this.events,
+      toRank,
+      currency,
+    ).execute();
   }
 
-  // TODO: implement this method
-  // Hint: if _isOver return { success: false, ... }; otherwise construct EndTurnAction and execute
   endTurn(): ActionResult {
-    throw new Error('Not implemented');
+    if (this._isOver) return this._gameOverResult();
+    return new EndTurnAction(this.currentPlayer, this._turnManager, this.events).execute();
   }
 
   // --- Scene Wrap Handler ---
@@ -119,22 +144,46 @@ export class Game {
   /**
    * Called by ActAction when a scene's last shot is removed.
    *
-   * TODO: implement this method
-   * Steps:
-   *  1. Award wrap bonuses to on-card role players (role.pay credits + 2 reputation each).
-   *  2. Clear all player roles at this location (clearRole() for players at location.id with a role).
-   *  3. Vacate all role slots (scene.roles and location.offCardRoles).
-   *  4. Call location.clearScene().
-   *  5. Increment _completedScenes.
-   *  6. If the deck is not empty, draw a card and call location.setScene(card).
-   *  7. Call _checkGameOver().
-   *  8. Return the rewards array.
+   * Awards on-card wrap bonuses, clears the finished scene's roles, then
+   * replaces the scene from the deck and checks whether the game has ended.
    */
   private _handleSceneWrap(
     scene: SceneCard,
     location: Location,
   ): Array<{ player: Player; credits: number; reputation: number }> {
-    throw new Error('Not implemented');
+    const rewards: Array<{ player: Player; credits: number; reputation: number }> = [];
+
+    for (const role of scene.roles) {
+      if (!role.takenByPlayerId) continue;
+      const player = this.players.find((candidate) => candidate.id === role.takenByPlayerId);
+      if (!player) {
+        throw new Error(`Role "${role.id}" is assigned to an unknown player.`);
+      }
+      player.earnCredits(role.pay);
+      player.earnReputation(2);
+      rewards.push({ player, credits: role.pay, reputation: 2 });
+    }
+
+    for (const player of this.players) {
+      if (player.locationId === location.id && player.hasRole()) {
+        player.clearRole();
+      }
+    }
+    for (const role of scene.roles) role.vacate();
+    for (const role of location.offCardRoles) role.vacate();
+
+    location.clearScene();
+    this._completedScenes += 1;
+    if (!this._sceneDeck.isEmpty()) {
+      const nextScene = this._sceneDeck.draw();
+      if (nextScene) location.setScene(nextScene);
+    }
+    this._checkGameOver();
+    return rewards;
+  }
+
+  private _gameOverResult(): ActionResult {
+    return { success: false, message: 'The game is over; no more actions are allowed.' };
   }
 
   // --- Game Over ---
@@ -164,6 +213,7 @@ export class Game {
 
   /** Validate a move without executing it. */
   canMove(targetLocationId: string): boolean {
+    if (this._isOver) return false;
     const action = new MoveAction(
       this.currentPlayer,
       this.board,
@@ -176,6 +226,7 @@ export class Game {
 
   /** Validate a role-take without executing it. */
   canTakeRole(roleId: string): boolean {
+    if (this._isOver) return false;
     const action = new TakeRoleAction(
       this.currentPlayer,
       this.board,
@@ -188,6 +239,7 @@ export class Game {
 
   /** Validate act without executing it. */
   canAct(): boolean {
+    if (this._isOver) return false;
     const action = new ActAction(
       this.currentPlayer,
       this.board,
@@ -201,6 +253,7 @@ export class Game {
 
   /** Validate rehearse without executing it. */
   canRehearse(): boolean {
+    if (this._isOver) return false;
     const action = new RehearseAction(
       this.currentPlayer,
       this.board,
@@ -212,6 +265,7 @@ export class Game {
 
   /** Validate upgrade without executing it. */
   canUpgrade(toRank: number, currency: Currency): boolean {
+    if (this._isOver) return false;
     const action = new UpgradeAction(
       this.currentPlayer,
       this.board,

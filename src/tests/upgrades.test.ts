@@ -14,62 +14,68 @@ describe('Upgrade rules', () => {
   }
 
   it('allows upgrading rank 1 → 2 with sufficient credits', () => {
-    // TODO: implement this test
-    // Hint: use setupForUpgrade with exact credit cost; upgrade(2, 'credits'); assert rank===2 and credits===0
-    expect(true).toBe(false);
+    const { game, alice } = setupForUpgrade(UPGRADE_COSTS[0].creditCost, 0);
+    const result = game.upgrade(2, 'credits');
+    expect(result.success).toBe(true);
+    expect(alice.rank).toBe(2);
+    expect(alice.credits).toBe(0);
   });
 
   it('allows upgrading with reputation instead of credits', () => {
-    // TODO: implement this test
-    // Hint: use setupForUpgrade with exact reputation cost; upgrade(2, 'reputation'); assert rank===2
-    expect(true).toBe(false);
+    const { game, alice } = setupForUpgrade(0, UPGRADE_COSTS[0].reputationCost);
+    expect(game.upgrade(2, 'reputation').success).toBe(true);
+    expect(alice.rank).toBe(2);
+    expect(alice.reputation).toBe(0);
   });
 
   it('rejects upgrade when credits are insufficient', () => {
-    // TODO: implement this test
-    // Hint: setupForUpgrade with 0 credits; upgrade(2, 'credits'); assert failure and rank unchanged
-    expect(true).toBe(false);
+    const { game, alice } = setupForUpgrade(0, 10);
+    const result = game.upgrade(2, 'credits');
+    expect(result.success).toBe(false);
+    expect(alice.rank).toBe(1);
   });
 
   it('rejects upgrade when reputation is insufficient', () => {
-    // TODO: implement this test
-    // Hint: setupForUpgrade with 0 reputation; upgrade(2, 'reputation'); assert failure and rank unchanged
-    expect(true).toBe(false);
+    const { game, alice } = setupForUpgrade(10, 0);
+    const result = game.upgrade(2, 'reputation');
+    expect(result.success).toBe(false);
+    expect(alice.rank).toBe(1);
   });
 
   it('rejects upgrading more than one rank at a time', () => {
-    // TODO: implement this test
-    // Hint: rank=1; try upgrade(3, 'credits'); assert failure (must do rank 1→2 first)
-    expect(true).toBe(false);
+    const { game } = setupForUpgrade();
+    const result = game.upgrade(3, 'credits');
+    expect(result.success).toBe(false);
   });
 
   it('rejects upgrade when not at upgrade location', () => {
-    // TODO: implement this test
-    // Hint: makeMinimalGame (Alice is at locA, not upgrade); upgrade(2, 'credits'); assert failure
-    expect(true).toBe(false);
+    const { game } = makeMinimalGame();
+    expect(game.upgrade(2, 'credits').success).toBe(false);
   });
 
   it('rejects upgrade when on a role', () => {
-    // TODO: implement this test
-    // Hint: take a role first; attempt upgrade; assert failure
-    expect(true).toBe(false);
+    const { game } = makeMinimalGame();
+    game.takeRole('scene-a-lead');
+    expect(game.upgrade(2, 'credits').success).toBe(false);
   });
 
   it('rejects upgrading beyond the maximum rank', () => {
-    // TODO: implement this test
-    // Hint: setupForUpgrade with rank=MAX_RANK; upgrade(MAX_RANK+1, 'credits'); assert failure
-    expect(true).toBe(false);
+    const { game } = setupForUpgrade(100, 100, MAX_RANK);
+    expect(game.upgrade(MAX_RANK + 1, 'credits').success).toBe(false);
   });
 
   it('cannot upgrade twice in one turn', () => {
-    // TODO: implement this test
-    // Hint: upgrade once successfully, then upgrade again same turn; second should fail
-    expect(true).toBe(false);
+    const { game } = setupForUpgrade(100, 100);
+    expect(game.upgrade(2, 'credits').success).toBe(true);
+    expect(game.upgrade(3, 'credits').success).toBe(false);
   });
 
   it('UPGRADE_COSTS table has entries for ranks 2 through MAX_RANK', () => {
-    // TODO: implement this test
-    // Hint: iterate rank 2..MAX_RANK; assert each entry exists with positive credit and reputation costs
-    expect(true).toBe(false);
+    for (let rank = 2; rank <= MAX_RANK; rank += 1) {
+      const entry = UPGRADE_COSTS.find((cost) => cost.toRank === rank);
+      expect(entry).toBeDefined();
+      expect(entry!.creditCost).toBeGreaterThan(0);
+      expect(entry!.reputationCost).toBeGreaterThan(0);
+    }
   });
 });
