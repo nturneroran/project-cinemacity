@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { makeGame } from './helpers';
+import { makeGame, makeMinimalGame } from './helpers';
 
 /**
  * Integration-level tests covering game-over and winner logic.
@@ -7,81 +7,118 @@ import { makeGame } from './helpers';
  */
 describe('Game state', () => {
   it('starts with isOver === false', () => {
-    // TODO: implement this test
-    // Hint: makeGame(); assert game.isOver === false
-    expect(true).toBe(false);
+    expect(makeGame().isOver).toBe(false);
   });
 
   it('starts with completedScenes === 0', () => {
-    // TODO: implement this test
-    // Hint: makeGame(); assert game.completedScenes === 0
-    expect(true).toBe(false);
+    expect(makeGame().completedScenes).toBe(0);
   });
 
   it('does not end while scenes are still active', () => {
-    // TODO: implement this test
-    // Hint: makeGame, endTurn twice; assert game.isOver === false
-    expect(true).toBe(false);
+    const game = makeGame();
+    game.endTurn();
+    game.endTurn();
+    expect(game.isOver).toBe(false);
   });
 
   it('Player.calculateScore returns correct formula (rep×2 + credits + rank)', () => {
-    // TODO: implement this test
-    // Hint: give Alice known credits/reputation; calculateScore() === rep*2 + credits + rank
-    expect(true).toBe(false);
+    const game = makeGame();
+    const alice = game.players[0];
+    alice.earnCredits(3);
+    alice.earnReputation(4);
+    expect(alice.calculateScore()).toBe(17);
   });
 
   it('emits stateChanged events on player actions', () => {
-    // TODO: implement this test
-    // Hint: subscribe to game.events; call endTurn; count stateChanged events emitted
-    expect(true).toBe(false);
+    const game = makeGame();
+    let stateChanges = 0;
+    game.events.subscribe((event) => {
+      if (event.type === 'stateChanged') stateChanges += 1;
+    });
+    game.endTurn();
+    expect(stateChanges).toBe(1);
   });
 
   it('emits turnEnded event with correct player references', () => {
-    // TODO: implement this test
-    // Hint: subscribe, call endTurn; verify previousPlayer.name and nextPlayer.name in the event
-    expect(true).toBe(false);
+    const game = makeGame(['Alice', 'Bob']);
+    let previous = '';
+    let next = '';
+    game.events.subscribe((event) => {
+      if (event.type === 'turnEnded') {
+        previous = event.payload.previousPlayer.name;
+        next = event.payload.nextPlayer.name;
+      }
+    });
+    game.endTurn();
+    expect(previous).toBe('Alice');
+    expect(next).toBe('Bob');
   });
 
   it('does not allow game actions after game over', () => {
-    // TODO: implement this test
-    // Hint: set (game as any)._isOver = true; call endTurn; assert failure with 'over' in message
-    expect(true).toBe(false);
+    const game = makeGame();
+    (game as any)._isOver = true;
+    const result = game.endTurn();
+    expect(result.success).toBe(false);
+    expect(result.message.toLowerCase()).toContain('over');
   });
 
   it('has expected starting locations for all players', () => {
-    // TODO: implement this test
-    // Hint: makeGame with 3 players; all should start at 'trailerPark'
-    expect(true).toBe(false);
+    const { players } = makeGame(['A', 'B', 'C']);
+    expect(players.map((player) => player.locationId)).toEqual([
+      'trailerPark',
+      'trailerPark',
+      'trailerPark',
+    ]);
   });
 
   it('board has at least one upgrade location', () => {
-    // TODO: implement this test
-    // Hint: filter getAllLocations() for isUpgradeLocation; assert length > 0
-    expect(true).toBe(false);
+    const { board } = makeGame();
+    expect(board.getAllLocations().some((location) => location.isUpgradeLocation)).toBe(true);
   });
 
   it('all non-upgrade locations start with a scene card', () => {
-    // TODO: implement this test
-    // Hint: getSceneLocations(); assert every location hasScene() === true
-    expect(true).toBe(false);
+    const { board } = makeGame();
+    expect(board.getSceneLocations().every((location) => location.hasScene())).toBe(true);
   });
 
   it('game emits gameOver event when game ends', () => {
-    // TODO: implement this test
-    // Hint: subscribe to events; force game over state; assert gameOver event was received
-    expect(true).toBe(false);
+    const { game, locA, locB } = makeMinimalGame({ shots: 1, budget: 1, rollDie: () => 6 });
+    locB.clearScene();
+    let gameOver = false;
+    game.events.subscribe((event) => {
+      if (event.type === 'gameOver') gameOver = true;
+    });
+    game.takeRole('scene-a-lead');
+    game.act();
+    expect(gameOver).toBe(true);
   });
 
   it('game winner is the player with the highest score', () => {
-    // TODO: implement this test
-    // Hint: give one player a higher score than others; trigger game over; verify winner identity
-    expect(true).toBe(false);
+    const { game, alice, bob, locB } = makeMinimalGame({ shots: 1, budget: 1, rollDie: () => 6 });
+    locB.clearScene();
+    alice.earnReputation(10);
+    bob.earnCredits(1);
+    let winner = '';
+    game.events.subscribe((event) => {
+      if (event.type === 'gameOver') winner = event.payload.winner.id;
+    });
+    game.takeRole('scene-a-lead');
+    game.act();
+    expect(winner).toBe('alice');
   });
 
   it('remainingScenes decreases after a scene wraps', () => {
-    // TODO: implement this test
-    // Hint: record remainingScenes before; wrap a 1-shot scene; assert remainingScenes decreased by 1
-    // Note: use makeGame (real data has cards in the deck) so a card is drawn after wrap
-    expect(true).toBe(false);
+    const game = makeGame(['Alice'], () => 6);
+    const alice = game.players[0];
+    const location = game.board.getSceneLocations()[0];
+    const scene = location.currentScene!;
+    while (scene.remainingShots > 1) scene.removeShot();
+    alice.moveTo(location.id);
+    const role = scene.getAvailableRoles().find((candidate) => candidate.requiredRank <= alice.rank);
+    expect(role).toBeDefined();
+    const before = game.remainingScenes;
+    expect(game.takeRole(role!.id).success).toBe(true);
+    expect(game.act().sceneCompleted).toBe(true);
+    expect(game.remainingScenes).toBe(before - 1);
   });
 });
