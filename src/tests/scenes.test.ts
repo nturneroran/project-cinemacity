@@ -14,44 +14,89 @@ import { makeMinimalGame } from './helpers';
  */
 describe('Scene completion', () => {
   it('removes the scene after all shots are taken', () => {
-    // TODO: implement this test
-    // Hint: shots=1, budget=1, rollDie=()=>6; take on-card role; act; assert sceneCompleted and currentScene is null
-    expect(true).toBe(false);
+    const { game, locA } = makeMinimalGame({ shots: 1, budget: 1, rollDie: () => 6 });
+    game.takeRole('scene-a-lead');
+
+    const result = game.act();
+
+    expect(result.success).toBe(true);
+    expect(result.sceneCompleted).toBe(true);
+    expect(locA.currentScene).toBeNull();
   });
 
   it('tracks completed scene count', () => {
-    // TODO: implement this test
-    // Hint: assert completedScenes is 0 before, 1 after a single-shot scene wraps
-    expect(true).toBe(false);
+    const { game } = makeMinimalGame({ shots: 1, budget: 1, rollDie: () => 6 });
+    game.takeRole('scene-a-lead');
+
+    expect(game.completedScenes).toBe(0);
+    game.act();
+
+    expect(game.completedScenes).toBe(1);
   });
 
   it('awards wrap bonuses to on-card players', () => {
-    // TODO: implement this test
-    // Hint: scene-a-lead pay=3; wrap gives +3 credits +2 rep; check alice's credits and rep after wrap
-    expect(true).toBe(false);
+    const { game, alice } = makeMinimalGame({ shots: 1, budget: 1, rollDie: () => 6 });
+    game.takeRole('scene-a-lead');
+
+    const beforeCredits = alice.credits;
+    const beforeRep = alice.reputation;
+    game.act();
+
+    expect(alice.credits).toBe(beforeCredits + 3);
+    expect(alice.reputation).toBe(beforeRep + 3);
   });
 
   it('clears player roles after scene wrap', () => {
-    // TODO: implement this test
-    // Hint: take role, act to wrap; assert alice.hasRole() === false and rehearsalTokens === 0
-    expect(true).toBe(false);
+    const { game, alice } = makeMinimalGame({ shots: 1, budget: 1, rollDie: () => 6 });
+    game.takeRole('scene-a-lead');
+    game.rehearse();
+
+    game.endTurn();
+    game.endTurn();
+    game.act();
+
+    expect(alice.hasRole()).toBe(false);
+    expect(alice.rehearsalTokens).toBe(0);
   });
 
   it('vacates role slots so they are available in future scenes', () => {
-    // TODO: implement this test
-    // Hint: after wrap, the original role object should have isAvailable() === true
-    expect(true).toBe(false);
+    const { game, locA } = makeMinimalGame({ shots: 1, budget: 1, rollDie: () => 6 });
+    const role = locA.currentScene!.roles.find((r) => r.id === 'scene-a-lead')!;
+    game.takeRole('scene-a-lead');
+
+    game.act();
+
+    expect(role.isAvailable()).toBe(true);
   });
 
   it('does not complete scene prematurely — requires all shots', () => {
-    // TODO: implement this test
-    // Hint: shots=3; act three times across turns; completedScenes should be 0 after first two acts
-    expect(true).toBe(false);
+    const { game } = makeMinimalGame({ shots: 3, budget: 1, rollDie: () => 6 });
+    game.takeRole('scene-a-lead');
+
+    const first = game.act();
+    expect(first.sceneCompleted).toBe(false);
+    expect(game.completedScenes).toBe(0);
+
+    game.endTurn();
+    game.endTurn();
+    const second = game.act();
+    expect(second.sceneCompleted).toBe(false);
+    expect(game.completedScenes).toBe(0);
+
+    game.endTurn();
+    game.endTurn();
+    const third = game.act();
+
+    expect(third.sceneCompleted).toBe(true);
+    expect(game.completedScenes).toBe(1);
   });
 
   it('clears off-card player roles on wrap too', () => {
-    // TODO: implement this test
-    // Hint: take off-card role (loc-a-extra), wrap the scene; assert alice.hasRole() === false
-    expect(true).toBe(false);
+    const { game, alice } = makeMinimalGame({ shots: 1, budget: 1, rollDie: () => 6 });
+    game.takeRole('loc-a-extra');
+
+    game.act();
+
+    expect(alice.hasRole()).toBe(false);
   });
 });
